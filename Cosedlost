@@ -1,0 +1,20 @@
+{!REQUIRESCRIPT("/soap/ajax/31.0/connection.js")}
+ 
+var myquery = "SELECT Id, Name, Trigger_Lost__c FROM Opportunity WHERE Id = '{!Opportunity.Id}' limit 1";
+ 
+sforce.connection.sessionId = "{!$Api.Session_ID}";
+result = sforce.connection.query(myquery);
+records = result.getArray("records");
+ 
+var myObject = records[0];
+var updateRecord = new Array();
+ 
+myObject.Trigger_Lost__c = true;
+updateRecord.push(myObject);
+ 
+result = sforce.connection.update(updateRecord);
+ 
+if(result[0].getBoolean("success")){
+window.location = "/apex/Opportunity_Lost?id=" + "{!Opportunity.Id}";
+}else{
+alert('Could not Trigger Process: '+result);
